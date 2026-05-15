@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
+
+# Runtime data
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/*.log
+data/*.log.*
+data/*.lock
+
+# Secrets
+.env
+
+# OS
+.DS_Store
