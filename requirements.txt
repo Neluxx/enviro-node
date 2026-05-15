@@ -1,0 +1,4 @@
+bme680>=2.0
+pyserial>=3.5
+SQLAlchemy>=2.0
+python-dotenv>=1.0
