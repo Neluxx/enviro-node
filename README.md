@@ -117,7 +117,7 @@ All settings are environment variables. Set them in `<project_root>/.env`.
 | Variable             | Default                   | Description                                          |
 |----------------------|---------------------------|------------------------------------------------------|
 | `API_BASE_URL`       | `https://api.example.com` | Base URL of your REST API (must be HTTPS)            |
-| `API_KEY`            | *(empty)*                 | API authentication key                               |
+| `API_BEARER_TOKEN`   | *(empty)*                 | API authentication token (sent as `Authorization: Bearer`) |
 | `NODE_UUID`          | *(empty)*                 | Unique identifier for this node, sent with each row  |
 | `MHZ19_PORT`         | `/dev/ttyAMA0`            | UART port for MH-Z19                                 |
 | `API_TIMEOUT`        | `15`                      | HTTP request timeout (s)                             |
@@ -130,28 +130,22 @@ All settings are environment variables. Set them in `<project_root>/.env`.
 
 ## API contract
 
-The app POSTs JSON to `<API_BASE_URL>/readings`:
+The app POSTs JSON to `<API_BASE_URL>/api/v1/sensor-data`, authenticated with
+`Authorization: Bearer <API_BEARER_TOKEN>`. This matches the
+[enviro-hub](https://github.com/Neluxx/enviro-hub) `StoreSensorDataRequest` contract.
 
 ```json
 {
   "node_uuid": "550e8400-e29b-41d4-a716-446655440000",
-  "id": 42,
-  "recorded_at": "2026-05-13T08:00:00+00:00",
-  "temperature_c": 22.45,
-  "humidity_pct": 48.12,
-  "pressure_hpa": 1013.25,
-  "gas_resistance": 125430.0,
-  "iaq": null,
-  "co2_ppm": 812,
-  "mhz_temperature": 24.0,
-  "submitted_at": null
+  "temperature": 22.45,
+  "humidity": 48.12,
+  "pressure": 1013,
+  "carbon_dioxide": 812,
+  "measured_at": "2026-05-13T08:00:00+00:00"
 }
 ```
 
-The receiving API should treat `(node_uuid, id)` as the idempotency key:
-the same row may be re-delivered if the previous `mark_sent` write failed.
-
-Expected success response: HTTP `200`, `201`, `202`, or `204`.
+Expected success response: HTTP `201`.
 Failed deliveries remain `submitted_at = NULL` in the database and are retried
 automatically on the next cron run. After `API_MAX_FAILURES` consecutive
 failures within a single run, the loop bails out early to avoid hammering
@@ -199,5 +193,5 @@ exits immediately with a warning instead of contending for the UART.
 | `BME680 init failed` | `sudo i2cdetect -y 1` — is the sensor detected? Check wiring and that I²C is enabled. |
 | `MH-Z19 UART error` | `ls -l /dev/ttyAMA0` — does the port exist? Reboot after `config.txt` changes. |
 | `Permission denied /dev/ttyAMA0` | `groups $USER` — ensure `dialout` is listed. Log out and back in after `usermod`. |
-| API errors | Check `API_BASE_URL` and `API_KEY` in `<project_root>/.env`. Unsent readings are retried automatically. |
+| API errors | Check `API_BASE_URL` and `API_BEARER_TOKEN` in `<project_root>/.env`. Unsent readings are retried automatically. |
 | Cron not firing | `grep CRON /var/log/syslog` to confirm cron is running. Verify the env file path is correct. |

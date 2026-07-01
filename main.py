@@ -35,7 +35,7 @@ def configure_logging() -> None:
 
 def collect_and_store(bme: BME680Sensor, mhz: MHZ19Sensor, db: Database) -> None:
     """Skips storage only if both sensors fail."""
-    recorded_at = datetime.now(timezone.utc)
+    measured_at = datetime.now(timezone.utc)
     bme_data, mhz_data = None, None
 
     try:
@@ -55,7 +55,7 @@ def collect_and_store(bme: BME680Sensor, mhz: MHZ19Sensor, db: Database) -> None
         return
 
     reading = {**(bme_data or {}), **(mhz_data or {})}
-    row_id = db.insert_reading(reading, recorded_at=recorded_at)
+    row_id = db.insert_reading(reading, measured_at=measured_at)
     log.info("Stored reading id=%d  data=%s", row_id, reading)
 
 

@@ -46,9 +46,9 @@ class BME680Sensor:
                 time.sleep(0.1)
 
             return {
-                "temperature_c": round(self._sensor.data.temperature, 2),
-                "humidity_pct": round(self._sensor.data.humidity, 2),
-                "pressure_hpa": round(self._sensor.data.pressure, 2),
+                "temperature": round(self._sensor.data.temperature, 2),
+                "humidity": round(self._sensor.data.humidity, 2),
+                "pressure": round(self._sensor.data.pressure, 2),
                 "gas_resistance": round(self._sensor.data.gas_resistance, 0)
                                   if self._sensor.data.heat_stable else None,
                 # iaq is only available with the proprietary Bosch BSEC library
@@ -120,6 +120,6 @@ class MHZ19Sensor:
             log.warning("MH-Z19 CO2 value %d ppm is outside the expected range.", co2_ppm)
 
         return {
-            "co2_ppm": co2_ppm,
+            "carbon_dioxide": co2_ppm,
             "mhz_temperature": float(temperature_c),
         }

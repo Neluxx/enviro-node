@@ -19,18 +19,18 @@ class SensorReading(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
     # BME680
-    temperature_c: Mapped[float | None] = mapped_column(default=None)
-    humidity_pct: Mapped[float | None] = mapped_column(default=None)
-    pressure_hpa: Mapped[float | None] = mapped_column(default=None)
+    temperature: Mapped[float | None] = mapped_column(default=None)
+    humidity: Mapped[float | None] = mapped_column(default=None)
+    pressure: Mapped[float | None] = mapped_column(default=None)
     gas_resistance: Mapped[float | None] = mapped_column(default=None)
     iaq: Mapped[float | None] = mapped_column(default=None)
 
     # MH-Z19
-    co2_ppm: Mapped[int | None] = mapped_column(default=None)
+    carbon_dioxide: Mapped[int | None] = mapped_column(default=None)
     mhz_temperature: Mapped[float | None] = mapped_column(default=None)
 
     # Timestamps
-    recorded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    measured_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
 
     __table_args__ = (
@@ -40,21 +40,21 @@ class SensorReading(Base):
     def to_dict(self) -> dict:
         return {
             "id": self.id,
-            "temperature_c": self.temperature_c,
-            "humidity_pct": self.humidity_pct,
-            "pressure_hpa": self.pressure_hpa,
+            "temperature": self.temperature,
+            "humidity": self.humidity,
+            "pressure": self.pressure,
             "gas_resistance": self.gas_resistance,
             "iaq": self.iaq,
-            "co2_ppm": self.co2_ppm,
+            "carbon_dioxide": self.carbon_dioxide,
             "mhz_temperature": self.mhz_temperature,
-            "recorded_at": self.recorded_at.isoformat() if self.recorded_at else None,
+            "measured_at": self.measured_at.isoformat() if self.measured_at else None,
             "submitted_at": self.submitted_at.isoformat() if self.submitted_at else None,
         }
 
     def __repr__(self) -> str:
         return (
-            f"<SensorReading id={self.id} recorded_at={self.recorded_at} "
-            f"co2={self.co2_ppm} temp={self.temperature_c}>"
+            f"<SensorReading id={self.id} measured_at={self.measured_at} "
+            f"co2={self.carbon_dioxide} temp={self.temperature}>"
         )
 
 
@@ -82,15 +82,15 @@ class Database:
         self._engine.dispose()
         log.debug("Database engine disposed.")
 
-    def insert_reading(self, data: dict, recorded_at: datetime) -> int:
+    def insert_reading(self, data: dict, measured_at: datetime) -> int:
         reading = SensorReading(
-            recorded_at=recorded_at,
-            temperature_c=data.get("temperature_c"),
-            humidity_pct=data.get("humidity_pct"),
-            pressure_hpa=data.get("pressure_hpa"),
+            measured_at=measured_at,
+            temperature=data.get("temperature"),
+            humidity=data.get("humidity"),
+            pressure=data.get("pressure"),
             gas_resistance=data.get("gas_resistance"),
             iaq=data.get("iaq"),
-            co2_ppm=data.get("co2_ppm"),
+            carbon_dioxide=data.get("carbon_dioxide"),
             mhz_temperature=data.get("mhz_temperature"),
         )
         with self._Session() as session:
@@ -110,7 +110,7 @@ class Database:
         stmt = (
             select(SensorReading)
             .where(SensorReading.submitted_at.is_(None))
-            .order_by(SensorReading.recorded_at.asc())
+            .order_by(SensorReading.measured_at.asc())
             .limit(limit)
         )
         with self._Session() as session:
