@@ -26,7 +26,7 @@ class ApiClient:
 
     def _build_payload(self, reading: dict) -> dict:
         """Selects the fields enviro-hub's StoreSensorDataRequest contract expects,
-        dropping node-local bookkeeping (id, submitted_at, gas_resistance, iaq, mhz_temperature)."""
+        dropping node-local bookkeeping (id, submitted_at)."""
         pressure = reading.get("pressure")
         return {
             "node_uuid": self._node_uuid,

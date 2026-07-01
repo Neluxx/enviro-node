@@ -30,10 +30,6 @@ class BME680Sensor:
         self._sensor.set_pressure_oversample(bme680.OS_4X)
         self._sensor.set_temperature_oversample(bme680.OS_8X)
         self._sensor.set_filter(bme680.FILTER_SIZE_3)
-        self._sensor.set_gas_status(bme680.ENABLE_GAS_MEAS)
-        self._sensor.set_gas_heater_temperature(320)
-        self._sensor.set_gas_heater_duration(150)
-        self._sensor.select_gas_heater_profile(0)
 
         log.info("BME680 initialised.")
 
@@ -49,10 +45,6 @@ class BME680Sensor:
                 "temperature": round(self._sensor.data.temperature, 2),
                 "humidity": round(self._sensor.data.humidity, 2),
                 "pressure": round(self._sensor.data.pressure, 2),
-                "gas_resistance": round(self._sensor.data.gas_resistance, 0)
-                                  if self._sensor.data.heat_stable else None,
-                # iaq is only available with the proprietary Bosch BSEC library
-                "iaq": None,
             }
         except SensorError:
             raise
@@ -114,12 +106,10 @@ class MHZ19Sensor:
             raise SensorError("MH-Z19 checksum mismatch.")
 
         co2_ppm = (response[2] << 8) | response[3]
-        temperature_c = response[4] - 40  # sensor offset per datasheet
 
         if co2_ppm < 400 or co2_ppm > 5000:
             log.warning("MH-Z19 CO2 value %d ppm is outside the expected range.", co2_ppm)
 
         return {
             "carbon_dioxide": co2_ppm,
-            "mhz_temperature": float(temperature_c),
         }

@@ -22,12 +22,9 @@ class SensorReading(Base):
     temperature: Mapped[float | None] = mapped_column(default=None)
     humidity: Mapped[float | None] = mapped_column(default=None)
     pressure: Mapped[float | None] = mapped_column(default=None)
-    gas_resistance: Mapped[float | None] = mapped_column(default=None)
-    iaq: Mapped[float | None] = mapped_column(default=None)
 
     # MH-Z19
     carbon_dioxide: Mapped[int | None] = mapped_column(default=None)
-    mhz_temperature: Mapped[float | None] = mapped_column(default=None)
 
     # Timestamps
     measured_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
@@ -43,10 +40,7 @@ class SensorReading(Base):
             "temperature": self.temperature,
             "humidity": self.humidity,
             "pressure": self.pressure,
-            "gas_resistance": self.gas_resistance,
-            "iaq": self.iaq,
             "carbon_dioxide": self.carbon_dioxide,
-            "mhz_temperature": self.mhz_temperature,
             "measured_at": self.measured_at.isoformat() if self.measured_at else None,
             "submitted_at": self.submitted_at.isoformat() if self.submitted_at else None,
         }
@@ -88,10 +82,7 @@ class Database:
             temperature=data.get("temperature"),
             humidity=data.get("humidity"),
             pressure=data.get("pressure"),
-            gas_resistance=data.get("gas_resistance"),
-            iaq=data.get("iaq"),
             carbon_dioxide=data.get("carbon_dioxide"),
-            mhz_temperature=data.get("mhz_temperature"),
         )
         with self._Session() as session:
             session.add(reading)
