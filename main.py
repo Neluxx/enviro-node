@@ -113,7 +113,7 @@ def main() -> None:
 
     bme = BME680Sensor()
     mhz = MHZ19Sensor(Config.MHZ19_SERIAL_PORT)
-    api = ApiClient(Config.API_BASE_URL, Config.API_KEY, Config.NODE_UUID)
+    api = ApiClient(Config.API_BASE_URL, Config.API_BEARER_TOKEN, Config.NODE_UUID)
 
     collect_and_store(bme, mhz, db)
     ship_pending(db, api)

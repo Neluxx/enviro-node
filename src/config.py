@@ -25,7 +25,7 @@ class Config:
     MHZ19_SERIAL_PORT: str = os.getenv("MHZ19_PORT", "/dev/ttyAMA0")
 
     API_BASE_URL: str = os.getenv("API_BASE_URL", "https://api.example.com")
-    API_KEY: str = os.getenv("API_KEY", "")
+    API_BEARER_TOKEN: str = os.getenv("API_BEARER_TOKEN", "")
     API_TIMEOUT_SECONDS: int = int(os.getenv("API_TIMEOUT", "15"))
     API_BATCH_SIZE: int = int(os.getenv("API_BATCH_SIZE", "50"))
     API_MAX_CONSECUTIVE_FAILURES: int = int(os.getenv("API_MAX_FAILURES", "3"))
