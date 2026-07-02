@@ -22,8 +22,13 @@ class BME680Sensor:
 
         try:
             self._sensor = bme680.BME680(bme680.I2C_ADDR_PRIMARY)
-        except Exception as exc:
-            raise SensorError(f"BME680 init failed: {exc}") from exc
+        except Exception:
+            try:
+                self._sensor = bme680.BME680(bme680.I2C_ADDR_SECONDARY)
+            except Exception as exc:
+                raise SensorError(
+                    f"BME680 init failed at both I2C addresses: {exc}"
+                ) from exc
 
         # Recommended oversampling / filter settings (Bosch application note)
         self._sensor.set_humidity_oversample(bme680.OS_2X)
