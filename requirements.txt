@@ -1,4 +1,4 @@
 bme680>=2.0
-pyserial>=3.5
+mh-z19>=3.1
 SQLAlchemy>=2.0
 python-dotenv>=1.0
