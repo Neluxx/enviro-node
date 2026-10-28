@@ -6,6 +6,12 @@ database via SQLAlchemy, then ships them to a configurable REST API.
 
 Designed to be triggered by **cron**.
 
+> [!IMPORTANT]
+> **This project has been archived.**  
+> The sensor node is being rewritten from scratch.  
+> Sensor data is now sent via **MQTT** instead of a REST API and processed by **Home Assistant**.  
+> The repository remains available for reference but will not receive any further updates.
+
 ---
 
 ## Hardware wiring
